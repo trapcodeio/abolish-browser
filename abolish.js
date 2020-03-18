@@ -176,6 +176,7 @@ class Abolish {
             let $skip = false;
             if (ruleData.hasOwnProperty('$skip')) {
                 $skip = ruleData['$skip'];
+                delete ruleData['$skip'];
                 if (typeof $skip === 'function') {
                     $skip = $skip(validated[rule]);
                 }
