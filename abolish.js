@@ -197,6 +197,18 @@ class Abolish {
                 if (typeof ruleData === "string")
                     ruleData = StringToRules_1.default(ruleData);
                 /**
+                 * if ruleData has property of $name then set to name
+                 */
+                let $name = false;
+                if (ruleData.hasOwnProperty('$name')) {
+                    $name = ruleData['$name'];
+                    delete ruleData['$name'];
+                    if (typeof $name !== 'string') {
+                        throw new Error(`$skip value or resolved function value must be a BOOLEAN in RuleFor: (${rule})`);
+                    }
+                }
+                console.log(ruleData);
+                /**
                  * Append internal Wildcard data
                  */
                 ruleData = Object.assign(Object.assign({}, internalWildcardRules), ruleData);
@@ -231,7 +243,7 @@ class Abolish {
                      * If is async push needed data to asyncData
                      */
                     if (isAsync) {
-                        asyncData.jobs.push({ rule, validator, validatorName, validatorOption });
+                        asyncData.jobs.push({ $name, rule, validator, validatorName, validatorOption });
                     }
                     else {
                         /**
@@ -287,7 +299,7 @@ class Abolish {
                              * Replace :param with rule converted to upperCase
                              * and if option is stringable, replace :option with validatorOption
                              */
-                            let message = validator.error.replace(':param', Functions_1.UpperFirst(rule));
+                            let message = validator.error.replace(':param', $name ? $name : Functions_1.UpperFirst(rule));
                             if (optionIsStringable)
                                 message = message.replace(':option', validatorOption);
                             // Return Error using the ValidationResult format
@@ -345,7 +357,7 @@ class Abolish {
              * Loop through jobs and run their validators
              */
             for (const job of jobs) {
-                const { rule, validator, validatorName, validatorOption } = job;
+                const { $name, rule, validator, validatorName, validatorOption } = job;
                 /**
                  * Value of key being validated in object
                  */
@@ -400,7 +412,7 @@ class Abolish {
                      * Replace :param with rule converted to upperCase
                      * and if option is stringable, replace :option with validatorOption
                      */
-                    let message = validator.error.replace(':param', Functions_1.UpperFirst(rule));
+                    let message = validator.error.replace(':param', $name ? $name : Functions_1.UpperFirst(rule));
                     if (optionIsStringable)
                         message = message.replace(':option', validatorOption);
                     // Return Error using the ValidationResult format
