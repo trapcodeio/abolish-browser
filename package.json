@@ -1,0 +1,20 @@
+{
+  "name": "abolish-browser",
+  "version": "0.0.5",
+  "description": "Browser version of abolish javascript validator",
+  "main": "abolish.js",
+  "repository": "https://github.com/trapcodeio/abolish-browser",
+  "author": "trapcodeio",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "browserify index.js -o abolish.js",
+    "build-min": "terser abolish.js --output='abolish.min.js'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "abolish": "^0.0.5",
+    "browserify": "^16.5.0",
+    "terser": "^4.6.7"
+  }
+}
