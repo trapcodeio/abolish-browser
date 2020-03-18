@@ -7,12 +7,9 @@ window.AbolishRule = Rule;
 
 },{"abolish":2}],2:[function(require,module,exports){
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Abolish_1 = __importDefault(require("./src/Abolish"));
-exports.Abolish = Abolish_1.default;
+const Abolish = require("./src/Abolish");
+exports.Abolish = Abolish;
 const Functions_1 = require("./src/Functions");
 exports.Rule = Functions_1.Rule;
 
@@ -207,7 +204,6 @@ class Abolish {
                         throw new Error(`$skip value or resolved function value must be a BOOLEAN in RuleFor: (${rule})`);
                     }
                 }
-                console.log(ruleData);
                 /**
                  * Append internal Wildcard data
                  */
