@@ -296,7 +296,7 @@ class Abolish {
                              * Replace :param with rule converted to upperCase
                              * and if option is stringable, replace :option with validatorOption
                              */
-                            let message = validator.error.replace(':param', $name ? $name : Functions_1.UpperFirst(rule));
+                            let message = validator.error.replace(':param', $name ? $name : Functions_1.StartCase(rule));
                             if (optionIsStringable)
                                 message = message.replace(':option', validatorOption);
                             // Return Error using the ValidationResult format
@@ -409,7 +409,7 @@ class Abolish {
                      * Replace :param with rule converted to upperCase
                      * and if option is stringable, replace :option with validatorOption
                      */
-                    let message = validator.error.replace(':param', $name ? $name : Functions_1.UpperFirst(rule));
+                    let message = validator.error.replace(':param', $name ? $name : Functions_1.StartCase(rule));
                     if (optionIsStringable)
                         message = message.replace(':option', validatorOption);
                     // Return Error using the ValidationResult format
@@ -474,6 +474,19 @@ function UpperFirst(str) {
     return str[0].toUpperCase() + str.substr(1);
 }
 exports.UpperFirst = UpperFirst;
+/**
+ * StartCase
+ * @param str
+ * @constructor
+ */
+function StartCase(str) {
+    if (str.indexOf('_') >= 0)
+        str = str.replace('_', ' ');
+    if (str.indexOf('-') >= 0)
+        str = str.replace('-', ' ');
+    return str.split(' ').map(word => UpperFirst(word)).join(' ');
+}
+exports.StartCase = StartCase;
 /**
  * Converts an array of rules (string | object)[] to one object rule
  * @example
