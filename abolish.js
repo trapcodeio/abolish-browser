@@ -407,7 +407,7 @@ class Abolish {
                         }
                     });
                 }
-                else if (!validationResult) {
+                else if (validationResult !== false) {
                     /**
                      * Check if option is stringable
                      * This is required because a rule option could an array or an object
@@ -616,7 +616,8 @@ const GlobalValidators = {
         name: 'exact',
         validator: (value, option) => {
             return value === option;
-        }
+        },
+        error: ':param failed exact validator'
     },
     min: {
         name: 'min',
