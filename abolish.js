@@ -8,10 +8,11 @@ window.AbolishRule = Rule;
 },{"abolish":2}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Rule = exports.Abolish = void 0;
 const Abolish = require("./src/Abolish");
 exports.Abolish = Abolish;
 const Functions_1 = require("./src/Functions");
-exports.Rule = Functions_1.Rule;
+Object.defineProperty(exports, "Rule", { enumerable: true, get: function () { return Functions_1.Rule; } });
 
 },{"./src/Abolish":3,"./src/Functions":5}],3:[function(require,module,exports){
 "use strict";
@@ -475,6 +476,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Get = exports.Set = exports.Pick = exports.Rule = exports.StartCase = exports.UpperFirst = void 0;
 const StringToRules_1 = __importDefault(require("./StringToRules"));
 /**
  * Change to string to upperFirst
