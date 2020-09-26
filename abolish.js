@@ -694,6 +694,10 @@ const GlobalValidators = {
         }
     },
 };
+/**
+ * Set an alias for `must` as `required
+ */
+GlobalValidators.required = Object.assign(Object.assign({}, GlobalValidators.must), { name: 'required' });
 module.exports = GlobalValidators;
 
 },{}],7:[function(require,module,exports){
