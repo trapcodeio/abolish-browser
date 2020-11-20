@@ -16,15 +16,6 @@ Object.defineProperty(exports, "Rule", { enumerable: true, get: function () { re
 
 },{"./src/Abolish":3,"./src/Functions":5}],3:[function(require,module,exports){
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -158,7 +149,7 @@ class Abolish {
         /**
          * Validated clones original object to prevent modifying values in original object
          */
-        let validated = Object.assign({}, object);
+        let validated = { ...object };
         /**
          * Get Keys to be validated
          */
@@ -220,7 +211,7 @@ class Abolish {
                 /**
                  * Append internal Wildcard data
                  */
-                ruleData = Object.assign(Object.assign({}, internalWildcardRules), ruleData);
+                ruleData = { ...internalWildcardRules, ...ruleData };
                 /**
                  * Loop through ruleData to check if validators defined exists
                  */
@@ -303,7 +294,9 @@ class Abolish {
                              *
                              * Only strings and numbers can be parsed as :option
                              */
-                            const optionIsStringable = typeof validatorOption === "string" || typeof validatorOption === "number";
+                            const optionIsStringable = typeof validatorOption === "string"
+                                || typeof validatorOption === "number"
+                                || Array.isArray(validatorOption);
                             /**
                              * Replace :param with rule converted to upperCase
                              * and if option is stringable, replace :option with validatorOption
@@ -361,7 +354,7 @@ class Abolish {
         /**
          * Return a promise
          */
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise(async (resolve) => {
             /**
              * Loop through jobs and run their validators
              */
@@ -377,7 +370,7 @@ class Abolish {
                      * Run Validation
                      * Passing required helpers
                      */
-                    validationResult = yield validator.validator(objectValue, validatorOption, {
+                    validationResult = await validator.validator(objectValue, validatorOption, {
                         error: (message, data) => new AbolishError_1.default(message, data),
                         modifier: new ObjectModifier_1.default(validated, rule)
                     });
@@ -440,7 +433,7 @@ class Abolish {
                 error: false,
                 validated: Functions_1.Pick(validated, keysToBeValidated)
             });
-        }));
+        });
     }
 }
 module.exports = Abolish;
@@ -530,7 +523,7 @@ function Rule(rules) {
     for (let rule of rules) {
         if (typeof rule === "string")
             rule = StringToRules_1.default(rule);
-        generatedRule = Object.assign(Object.assign({}, generatedRule), rule);
+        generatedRule = { ...generatedRule, ...rule };
     }
     return generatedRule;
 }
@@ -574,11 +567,6 @@ exports.Get = Get;
 
 },{"./StringToRules":8}],6:[function(require,module,exports){
 "use strict";
-/**
- * @param value
- * @return {string}
- * @private
- */
 function trimIfString(value) {
     return typeof value === 'string' ? value.trim() : value;
 }
@@ -624,7 +612,7 @@ const GlobalValidators = {
     min: {
         name: 'min',
         error: ':param is too small. (Min. :option)',
-        validator: (value, option) => {
+        validator: (value, option, helpers) => {
             const isNotNumber = isNaN(value);
             /**
              * if is string and string is not a valid number,
@@ -632,7 +620,7 @@ const GlobalValidators = {
              * we pass the validation to `minLength`
              */
             if ((typeof value === "string" && isNotNumber) || Array.isArray(value))
-                return GlobalValidators.minLength.validator(value, option);
+                return GlobalValidators.minLength.validator(value, option, helpers);
             // return false if this is not a number
             if (isNotNumber)
                 return false;
@@ -643,7 +631,7 @@ const GlobalValidators = {
     max: {
         name: 'max',
         error: ':param is too big. (Max. :option)',
-        validator: (value, option) => {
+        validator: (value, option, helpers) => {
             const isNotNumber = isNaN(value);
             /**
              * if is string and string is not a valid number,
@@ -651,7 +639,7 @@ const GlobalValidators = {
              * we pass the validation to `minLength`
              */
             if ((typeof value === "string" && isNotNumber) || Array.isArray(value))
-                return GlobalValidators.maxLength.validator(value, option);
+                return GlobalValidators.maxLength.validator(value, option, helpers);
             // return false if this is not a number
             if (isNotNumber)
                 return false;
@@ -682,22 +670,30 @@ const GlobalValidators = {
     selectMin: {
         name: 'selectMin',
         error: 'Select at-least :option :param.',
-        validator: (value, option) => {
-            return GlobalValidators.minLength.validator(value, option);
+        validator: (value, option, helpers) => {
+            return GlobalValidators.minLength.validator(value, option, helpers);
         }
     },
     selectMax: {
         name: 'selectMax',
         error: 'Select at-most :option :param.',
-        validator: (value, option) => {
-            return GlobalValidators.maxLength.validator(value, option);
+        validator: (value, option, helpers) => {
+            return GlobalValidators.maxLength.validator(value, option, helpers);
         }
     },
+    $inline: {
+        name: '$custom',
+        error: ':param failed inline validation.',
+        validator: (v, o, helpers) => {
+            return o(v, helpers);
+        }
+    }
 };
 /**
  * Set an alias for `must` as `required
  */
-GlobalValidators.required = Object.assign(Object.assign({}, GlobalValidators.must), { name: 'required' });
+GlobalValidators.required = Object.assign({}, GlobalValidators.must);
+GlobalValidators.required.name = 'required';
 module.exports = GlobalValidators;
 
 },{}],7:[function(require,module,exports){
@@ -772,6 +768,12 @@ class ObjectModifier {
      */
     unsetThis() {
         return lodash_unset_1.default(this.data, this.path);
+    }
+    /**
+     * Get current path but with StartCase
+     */
+    getPath() {
+        return Functions_1.StartCase(this.path);
     }
 }
 module.exports = ObjectModifier;
@@ -849,7 +851,7 @@ const StringToRules = (str) => {
 module.exports = StringToRules;
 
 },{}],9:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -1940,9 +1942,9 @@ function has(object, path) {
 
 module.exports = has;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],10:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -2953,5 +2955,5 @@ function unset(object, path) {
 
 module.exports = unset;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1]);
