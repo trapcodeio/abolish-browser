@@ -1,6 +1,6 @@
 {
   "name": "abolish-browser",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Browser version of abolish javascript validator",
   "main": "abolish.js",
   "repository": "https://github.com/trapcodeio/abolish-browser",
