@@ -9,6 +9,7 @@ To use [abolish](https://www.npmjs.com/package/abolish) directly in your browser
 ```
 `Abolish` is exposed as `window.Abolish` while
 `Rule` is exposed as `window.AbolishRule`
+`ParseRules` is exposed as `window.AbolishParseRules`
 
 ```html
 <script>

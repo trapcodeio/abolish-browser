@@ -1,5 +1,6 @@
-const {Abolish, Rule} = require('abolish');
+const {Abolish, Rule, ParseRules} = require('abolish');
 
 window.Abolish = Abolish;
 window.AbolishRule = Rule;
+window.AbolishParseRules = ParseRules;
 

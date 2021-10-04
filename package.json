@@ -8,14 +8,15 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "browserify index.js -o abolish.js",
-    "build-min": "terser abolish.js --output='abolish.min.js'"
+    "build": "npm run bundle && npm run minify",
+    "bundle": "browserify --external joi index.js -o abolish.js",
+    "minify": "terser abolish.js --output='abolish.min.js'"
   },
   "dependencies": {},
   "devDependencies": {
-    "abolish": "^1.0.5",
+    "abolish": "^4.5.3",
     "browserify": "^17.0.0",
-    "terser": "^5.5.0"
+    "terser": "^5.9.0"
   },
   "keywords": [
     "abolish",
